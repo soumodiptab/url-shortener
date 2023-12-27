@@ -1,9 +1,8 @@
-const Singleton = require("../models/singleton");
 const UrlModel = require("../db/urlModel");
-const crypto  = require("crypto")
-class UrlService extends Singleton{
+import * as crypto from "crypto";
+class UrlService{
+    private static instance : UrlService
     constructor(){
-        super();
         this.urlModel = new UrlModel;
     }
     generateShortUrl(originalUrl){
