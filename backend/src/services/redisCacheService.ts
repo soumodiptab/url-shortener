@@ -5,6 +5,7 @@ export class RedisCacheService{
     private static instance: RedisCacheService;
     private config : ConfigService;
     private client : any;
+    private ttl : any;
     constructor(){
         this.config = ConfigService.getInstance()
         this.configure();
@@ -16,19 +17,17 @@ export class RedisCacheService{
         const port=this.config.get("REDIS_PORT");
         const url=`redis://${username}:${password}@${host}:${port}`
         this.client =createClient({url:url});
+        this.ttl =  this.config.get("REDIS_TTL");
         await this.client.connect();
     }
     async get(key : string) {
-        const val=await this.client.get(key);
-        if(!val){
-            throw new Error()
-        }
+        return await this.client.get(key);
     }
-    async set(key : string,value : string,expire : number){
-        if(expire){
-            return await this.client.set(key,value,'EX',expire);
+    async set(key : string,value : string,expire? : number){
+        if(!expire){
+            expire = this.ttl;
         }
-        return await this.client.set(key,value);
+        return await this.client.set(key,value,'EX',expire);
     }
     public static getInstance(){
         if(!this.instance){

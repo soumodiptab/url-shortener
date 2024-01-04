@@ -8,7 +8,7 @@ export default class ConfigService{
             this.environ=process.env;
     }
 
-    public get(key: string): string | undefined {
+    public get(key: string): any | undefined {
         return this.environ[key];
     }
     public static getInstance(): ConfigService{
